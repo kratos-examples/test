@@ -1,9 +1,9 @@
 package wireservice
 
 import (
-	"github.com/go-kratos/kratos/v2/log"
 	"github.com/yylego/kratos-examples/demo1kratos/internal/conf"
 	"github.com/yylego/kratos-examples/demo1kratos/internal/service"
+	"log/slog"
 )
 
 type WireBox struct {
@@ -16,6 +16,6 @@ func newWireBox(studentService *service.StudentService) *WireBox {
 	}
 }
 
-func NewWireBox(confData *conf.Data, logger log.Logger) (*WireBox, func(), error) {
+func NewWireBox(confData *conf.Data, logger *slog.Logger) (*WireBox, func(), error) {
 	return wireApp(confData, logger)
 }

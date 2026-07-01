@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/go-kratos/kratos/v2/log"
 	"github.com/stretchr/testify/require"
 	"github.com/yylego/kratos-examples/demo1kratos"
 	pb "github.com/yylego/kratos-examples/demo1kratos/api/student"
@@ -17,6 +16,7 @@ import (
 	"github.com/yylego/osexistpath/osmustexist"
 	"github.com/yylego/zaplog"
 	"go.uber.org/zap"
+	"log/slog"
 )
 
 var caseWireBox *wireservice.WireBox
@@ -26,7 +26,7 @@ func TestMain(m *testing.M) {
 	zaplog.LOG.Debug("run-test-main", zap.String("config-path", configPath))
 
 	cfg := cfgdata.ParseConfig(configPath)
-	wireBox, cleanup, err := wireservice.NewWireBox(cfg.Data, log.NewStdLogger(os.Stdout))
+	wireBox, cleanup, err := wireservice.NewWireBox(cfg.Data, slog.New(slog.NewTextHandler(os.Stdout, nil)))
 	must.Done(err)
 	defer cleanup()
 

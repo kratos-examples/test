@@ -5,14 +5,14 @@
 package wiredata
 
 import (
-	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
 	"github.com/yylego/kratos-examples/demo1kratos/internal/conf"
 	"github.com/yylego/kratos-examples/demo1kratos/internal/data"
+	"log/slog"
 )
 
 // wireApp init kratos application.
-func wireApp(*conf.Data, log.Logger) (*WireBox, func(), error) {
+func wireApp(*conf.Data, *slog.Logger) (*WireBox, func(), error) {
 	panic(wire.Build(
 		data.ProviderSet,
 		newWireBox,

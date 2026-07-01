@@ -7,21 +7,25 @@
 package wirebiz
 
 import (
-	"github.com/go-kratos/kratos/v2/log"
 	"github.com/yylego/kratos-examples/demo1kratos/internal/biz"
 	"github.com/yylego/kratos-examples/demo1kratos/internal/conf"
 	"github.com/yylego/kratos-examples/demo1kratos/internal/data"
+	"log/slog"
 )
 
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(confData *conf.Data, logger log.Logger) (*WireBox, func(), error) {
+func wireApp(confData *conf.Data, logger *slog.Logger) (*WireBox, func(), error) {
 	dataData, cleanup, err := data.NewData(confData, logger)
 	if err != nil {
 		return nil, nil, err
 	}
-	studentUsecase := biz.NewStudentUsecase(dataData, logger)
+	studentUsecase, err := biz.NewStudentUsecase(dataData, logger)
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
 	wireBox := newWireBox(studentUsecase)
 	return wireBox, func() {
 		cleanup()

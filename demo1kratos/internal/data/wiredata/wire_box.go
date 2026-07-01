@@ -1,9 +1,9 @@
 package wiredata
 
 import (
-	"github.com/go-kratos/kratos/v2/log"
 	"github.com/yylego/kratos-examples/demo1kratos/internal/conf"
 	"github.com/yylego/kratos-examples/demo1kratos/internal/data"
+	"log/slog"
 )
 
 type WireBox struct {
@@ -16,6 +16,6 @@ func newWireBox(d *data.Data) *WireBox {
 	}
 }
 
-func NewWireBox(confData *conf.Data, logger log.Logger) (*WireBox, func(), error) {
+func NewWireBox(confData *conf.Data, logger *slog.Logger) (*WireBox, func(), error) {
 	return wireApp(confData, logger)
 }
