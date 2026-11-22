@@ -13,6 +13,24 @@
 
 Demo projects built with the Go-Kratos framework.
 
+## WireBox integration tests
+
+This fork adds tests to demo1 while retaining the baseline service code. Wire builds a separate object graph at each layer: `wiredata` exposes `Data`, `wirebiz` exposes `StudentUsecase`, and `wireservice` exposes `StudentService`. Each package's `TestMain` loads `demo1kratos/configs`, constructs its WireBox, runs the tests, and closes the data resources. These are PostgreSQL integration tests, not mocked unit tests; they call the layers directly without starting HTTP or gRPC listeners.
+
+Use a development PostgreSQL database matching `demo1kratos/configs/config.yaml` before running the tests. The usecase setup runs the baseline schema migration. The create tests remove their own returned student IDs with `t.Cleanup`, including when a later assertion fails; do not point this demo at a production database.
+
+From the repository root:
+
+```bash
+cd demo1kratos
+wire ./...
+go test -count=1 -v ./internal/data ./internal/biz ./internal/service
+```
+
+`TestData_NotNil` checks the data graph, `TestStudentUsecase_CreateStudent` creates a student through the usecase, and `TestStudentService_CreateStudent` creates one through the service. All three should pass; the create tests also check that cleanup succeeds. Run `go test -count=1 ./...` in each service module for its full test suite. Start the two services as described in their READMEs to exercise the unchanged HTTP API.
+
+The test code and all three WireBox graphs appear in [changes/demo1.md](changes/demo1.md). [changes/demo2.md](changes/demo2.md) intentionally shows no changes. Run `go test ./...` from the repository root to regenerate these reports; a root test run does not execute tests in nested modules.
+
 ---
 
 <!-- TEMPLATE (EN) BEGIN: LANGUAGE NAVIGATION -->

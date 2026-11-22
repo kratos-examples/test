@@ -13,6 +13,24 @@
 
 基于 Go-Kratos 框架构建的演示项目
 
+## 分层集成测试
+
+这个分叉在 demo1 增加测试，业务服务代码保持基线原样。Wire 为各层单独组装对象：`wiredata` 暴露 `Data`，`wirebiz` 暴露 `StudentUsecase`，`wireservice` 暴露 `StudentService`。每个测试包的 `TestMain` 读取 `demo1kratos/configs`，构造 WireBox，执行测试并关闭数据资源。这些是连接真实 PostgreSQL 的集成测试，通过对象直接调用各层，不启动 HTTP 或 gRPC 监听。
+
+运行前准备与 `demo1kratos/configs/config.yaml` 一致的开发用 PostgreSQL 数据库。构造 usecase 时会执行基线的表结构迁移。创建测试通过 `t.Cleanup` 按本次返回的学生 ID 删除记录，后续断言失败也会执行清理；请勿连接生产数据库。
+
+从仓库根目录执行：
+
+```bash
+cd demo1kratos
+wire ./...
+go test -count=1 -v ./internal/data ./internal/biz ./internal/service
+```
+
+`TestData_NotNil` 检查数据层对象，`TestStudentUsecase_CreateStudent` 通过 usecase 创建学生，`TestStudentService_CreateStudent` 通过 service 创建学生。三个测试均应通过，创建测试也会检查清理结果。在两个服务模块分别执行 `go test -count=1 ./...` 可运行各自的全部测试；按两个服务的 README 启动服务，可继续验证基线 HTTP 接口。
+
+测试及三个 WireBox 的完整差异见 [changes/demo1.md](changes/demo1.md)，[changes/demo2.md](changes/demo2.md) 保持无差异。在仓库根目录执行 `go test ./...` 可重生成报告；根模块测试不会运行嵌套模块中的测试。
+
 ---
 
 <!-- TEMPLATE (ZH) BEGIN: LANGUAGE NAVIGATION -->
