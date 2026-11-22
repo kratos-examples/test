@@ -40,6 +40,11 @@ func TestStudentService_CreateStudent(t *testing.T) {
 		Name: "test-abc",
 	})
 	require.NoError(t, err)
-	t.Log(neatjsons.S(res))
+	require.NotNil(t, res)
 	require.NotNil(t, res.Student)
+	t.Cleanup(func() {
+		_, err := caseWireBox.StudentService.DeleteStudent(context.Background(), &pb.DeleteStudentRequest{Id: res.Student.Id})
+		require.NoError(t, err)
+	})
+	t.Log(neatjsons.S(res))
 }

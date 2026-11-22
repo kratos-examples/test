@@ -40,6 +40,10 @@ func TestStudentUsecase_CreateStudent(t *testing.T) {
 		Name: "abc",
 	})
 	require.Nil(t, ebz)
+	require.NotNil(t, res)
+	t.Cleanup(func() {
+		require.Nil(t, caseWireBox.StudentUsecase.DeleteStudent(context.Background(), res.ID))
+	})
 	t.Log(neatjsons.S(res))
 	require.NotEmpty(t, res.Name)
 }

@@ -2,10 +2,10 @@
 
 Code differences compared to source project.
 
-## internal/biz/student_test.go (+45 -0)
+## internal/biz/student_test.go (+49 -0)
 
 ```diff
-@@ -0,0 +1,45 @@
+@@ -0,0 +1,49 @@
 +package biz_test
 +
 +import (
@@ -48,6 +48,10 @@ Code differences compared to source project.
 +		Name: "abc",
 +	})
 +	require.Nil(t, ebz)
++	require.NotNil(t, res)
++	t.Cleanup(func() {
++		require.Nil(t, caseWireBox.StudentUsecase.DeleteStudent(context.Background(), res.ID))
++	})
 +	t.Log(neatjsons.S(res))
 +	require.NotEmpty(t, res.Name)
 +}
@@ -309,10 +313,10 @@ Code differences compared to source project.
 +}
 ```
 
-## internal/service/student_test.go (+45 -0)
+## internal/service/student_test.go (+50 -0)
 
 ```diff
-@@ -0,0 +1,45 @@
+@@ -0,0 +1,50 @@
 +package service_test
 +
 +import (
@@ -355,8 +359,13 @@ Code differences compared to source project.
 +		Name: "test-abc",
 +	})
 +	require.NoError(t, err)
-+	t.Log(neatjsons.S(res))
++	require.NotNil(t, res)
 +	require.NotNil(t, res.Student)
++	t.Cleanup(func() {
++		_, err := caseWireBox.StudentService.DeleteStudent(context.Background(), &pb.DeleteStudentRequest{Id: res.Student.Id})
++		require.NoError(t, err)
++	})
++	t.Log(neatjsons.S(res))
 +}
 ```
 
